@@ -1,8 +1,31 @@
-﻿
+###############################################################################
+# Copyright
+# File Name:DNSManageTool
+# Author: Jeff Zhu(zhu.jianfu@oe.21vianet.com|5427)
+#         Private contact: jeffzhu2012@gmail.com
+# Version: V1.01
+# Date: 2018-09-06
+# Descrition: Work for Manage DNS record in Azure
+# Others: 
+# Function List:
+#          Login
+#          checkZonematch
+#          checkrecordexist
+#          NewAdd
+#          Add-CNAME
+#          Add-OtherType
+#          Remove
+#          Modify
+#          ModifyTTLOnly
+#          MAIN
+###############################################################################
+
+
+
 Function Login($SubscripttionId)
 {
     
-    try{$Count = Get-AzureRmSubscription} catch{}
+    try{$Count = Get-AzureRmSubscription} catch{} 
     $sub = $Count.Id
     if("$sub" -ne "$SubscriptionId")
     {
@@ -61,8 +84,8 @@ Function checkrecordexist #($RNWZN,$ZN,$RGN,$RT)
     Write-Host "`nplease type the recordSet info" -ForegroundColor Cyan
     
     $temp = show-command Get-AzureRmDnsRecordSet -PassThru
-    Write-Host "`n$temp" -ForegroundColor Yellow
-    $recordSet = Invoke-Expression $temp
+    Write-Host "`n$temp" -ForegroundColor Yellow 
+    trap{$recordSet = Invoke-Expression $temp}
     Write-Host "`n$recordSet" -ForegroundColor Yellow
    # $recordSet = show-command Get-AzureRmDnsRecordSet -ErrorPopup #chuangzi
 	
@@ -89,7 +112,7 @@ Function checkrecordexist #($RNWZN,$ZN,$RGN,$RT)
 Function Add-CNAME
 {
     ############CNAME ADD Logic##################################################################
-    Write-Host "`nplesase carefully fill the window that you want to create the name of CNAME."
+    Write-Host "`nPlesase carefully fill the window that you want to create the name of CNAME."
     # $recordSet = New-AzureRmDnsRecordSet -Name sha-dsts.jeff1.test -ZoneName chinacloudpai.cn -ResourceGroupName staticazuredns -RecordType CName
     # $recordSet = show-command New-AzureRmDnsRecordSet -ErrorPopup
     $tempaddcname = Show-Command New-AzureRmDnsRecordSet -PassThru
@@ -97,7 +120,7 @@ Function Add-CNAME
     $recordSet = Invoke-Expression $tempaddcname
     $recordSet
     #$record1 = New-AzureRmDnsRecordConfig -CName www.3-1.jeff.com
-    Write-Host "please fill the window that you want to add in the CNAME you just created."
+    Write-Host "`nplease fill the window that you want to add in the CNAME you just created."
     $tempaddcname1 = Show-Command New-AzureRmDnsRecordConfig -PassThru
     Write-Host "$tempaddcname1" -ForegroundColor Yellow
     $Title = "Add Method"
@@ -144,6 +167,7 @@ Function Add-CNAME
 
 Function Add-OtherType
 {
+    Write-Host "`nBe cautious when fill the window that you want to create." -ForegroundColor Yellow
     $i = 1 #循环判断依据
     # $newRecords =@() #New-Object -TypeName System.Collections.ArrayList
     #$A = @()
@@ -553,7 +577,7 @@ Function MAIN
 
     BEGIN
     {
-        Start-Transcript -path .\MainlogK.txt -Force -Append –NoClobber
+        Start-Transcript -path .\DNSManageLog.txt -Force -Append –NoClobber
         
         Login($SubscriptionId)
     }
@@ -565,11 +589,11 @@ Function MAIN
        
         
         $t = @()
-        Write-Host "`nplease type the recordSet info" -ForegroundColor Cyan
+        Write-Host "`nPlease type the recordSet info" -ForegroundColor Cyan
     
         $temp = show-command Get-AzureRmDnsRecordSet -PassThru
         Write-Host "`n$temp" -ForegroundColor Yellow
-        $recordSet = Invoke-Expression $temp
+        try {$recordSet = Invoke-Expression $temp} catch{}
         $recordSet
 
        # $recordSet = show-command Get-AzureRmDnsRecordSet -ErrorPopup #chuangzi
@@ -603,10 +627,10 @@ Function MAIN
                     $Title1 = "method select"
                     $Message1 = "Select Which Method Command to run"
                     $Choices1 = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
-                    $Choices1.Add((New-Object Management.Automation.Host.ChoiceDescription "&1.RemoveAll records", "purly add record.")) 
+                    $Choices1.Add((New-Object Management.Automation.Host.ChoiceDescription "&1.RemoveAll records", "Remove all record.")) 
                     $Choices1.Add((New-Object Management.Automation.Host.ChoiceDescription "&2.Modify", "Add or delete from mutiple records."))
                     $Choices1.Add((New-Object Management.Automation.Host.ChoiceDescription "&3.ModifyTTLOnly", "Use to Modify TTL without Add or Delete"))
-                    $Choices1.Add((New-Object Management.Automation.Host.ChoiceDescription "&4.Exist script", ""))
+                    $Choices1.Add((New-Object Management.Automation.Host.ChoiceDescription "&4.Exit script", "Exit Script"))
                     $Menu1 = $Host.UI.PromptForChoice($Title1, $Message1, $Choices1,1)
                     switch($Menu1)
                     {
@@ -634,7 +658,7 @@ Function MAIN
                 }
                 2 #Exist
                 {
-                    Write-Host "`nExiting the Script, Thank you" -ForegroundColor Cyan; Break
+                    Write-Host "`nExit the Script, Thank you" -ForegroundColor Cyan; Break
                     Stop-Transcript
                 }
             }
