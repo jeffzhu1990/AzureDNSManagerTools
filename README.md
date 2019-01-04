@@ -4,8 +4,8 @@
 ***The Azure PowerShell Link as below***<br>
 
 **This version of  the scrip have three mainly Functions:**<br>
-Add <br>
-Modify <br>
-Remove <br>
+*Add
+*Modify
+*Remove
 All these three functions accept all record types.
 You will meet a window to add the record, and also the update process. The script avoid edit related command, that will help you to concentrate you attention to execute these type of tasks.
